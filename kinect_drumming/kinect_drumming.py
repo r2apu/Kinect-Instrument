@@ -13,12 +13,6 @@ import time
 threshold = 100
 current_depth = 480
 
-def video_cv(video):
-    video = video[:, :, ::-1]  # RGB -> BGR
-    image = cv.CreateImageHeader((video.shape[1], video.shape[0]),cv.IPL_DEPTH_8U,3)
-    cv.SetData(image, video.tostring(),video.dtype.itemsize * 3 * video.shape[1])
-    return image
-
 def change_threshold(value):
     global threshold
     threshold = value
@@ -135,7 +129,6 @@ def flip_image(imagen):
 	
 	return imagen
 
-t0 = t1 = 0
 def send_midi_message(cuadrantes):
 	global t0, t1
 	# 1 | 2 | 3
@@ -177,10 +170,8 @@ def send_midi_message(cuadrantes):
 	
 	if (1 in cuadrantes):
 		output.send(c4)
-		t0 = time.clock()
 	else:
-		output.send(c40)
-		t1 = time.clock()	
+		output.send(c40)	
 	
 	if (2 in cuadrantes):
 		output.send(d4)
@@ -223,7 +214,7 @@ def send_midi_message(cuadrantes):
 		output.send(d50)
 
 if __name__ == "__main__":
-	global t0, t1
+	print "Presione 'q' para salir"
 			
 	output = mido.open_output()	
 	while 1:
@@ -245,8 +236,6 @@ if __name__ == "__main__":
 		if centroides:
 			cuadrantes = get_cuadrantes_9(centroides)
 			send_midi_message(cuadrantes)
-		
-		print str(t1-t0)
 				
 		show_image(image, "matching")
 		show_video(image, "matching")
