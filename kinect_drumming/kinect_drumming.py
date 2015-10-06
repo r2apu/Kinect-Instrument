@@ -8,8 +8,6 @@ import numpy as np
 import mido
 from mido import Message
 
-import time
-
 threshold = 100
 current_depth = 480
 
