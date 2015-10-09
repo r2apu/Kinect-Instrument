@@ -6,5 +6,5 @@ modifique el makefile según la escala que necesita (c, c#, d, d#, e, f, f#, g, 
 
 python kinect_drumming/kinect_drumming.py {escala} {divisiones}
 
-ejemplo:
+ejemplo de do mayor con 9 divisiones:
 python kinect_drumming/kinect_drumming.py c 9
