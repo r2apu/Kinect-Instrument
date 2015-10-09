@@ -5,7 +5,7 @@ Dependencias kinect:
 $sudo apt-get install git-core cmake freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev
 
 Dependencias python:
-$sudo apt-get install cython python-dev python-numpy python-opencv
+$sudo apt-get install cython python-dev python-numpy python-opencv python-pip libportmidi-dev
 $pip install mido
 
 Demás dependencias de sonido:
