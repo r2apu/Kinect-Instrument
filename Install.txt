@@ -1,0 +1,54 @@
+$sudo apt-get update
+$sudo apt-get upgrade
+
+Dependencias kinect:
+$sudo apt-get install git-core cmake freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev
+
+Dependencias python:
+$sudo apt-get install cython python-dev python-numpy python-opencv
+$pip install mido
+
+Demás dependencias de sonido:
+$sudo apt-get install qjackctl amsynth
+
+Clonar repositorio de libfreenect
+$git clone git://github.com/OpenKinect/libfreenect.git
+
+Instalar libfreenect
+$cd libfreenect
+$mkdir build
+$cd build
+$cmake -L ..
+$make
+$sudo make install
+$sudo ldconfig /usr/local/lib64/
+
+Kinect como no root:
+$sudo adduser $USER video
+$sudo adduser $USER plugdev
+$sudo nano /etc/udev/rules.d/51-kinect.rules
+
+Agregar lo siguiente:
+# ATTR{product}=="Xbox NUI Motor"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02b0", MODE="0666"
+# ATTR{product}=="Xbox NUI Audio"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02ad", MODE="0666"
+# ATTR{product}=="Xbox NUI Camera"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02ae", MODE="0666"
+# ATTR{product}=="Xbox NUI Motor"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02c2", MODE="0666"
+# ATTR{product}=="Xbox NUI Motor"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02be", MODE="0666"
+# ATTR{product}=="Xbox NUI Motor"
+SUBSYSTEM=="usb", ATTR{idVendor}=="045e", ATTR{idProduct}=="02bf", MODE="0666"
+
+Log out y log in de nuevo
+
+Probar:
+$freenect-glview
+
+Ir a .../libfreenect/wrappers/python
+$sudo python setup.py install
+
+
+git clone https://github.com/r2apu/Kinect-Instrument.git
