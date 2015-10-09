@@ -8,6 +8,9 @@ import numpy as np
 import mido
 from mido import Message
 
+import time
+import sys
+
 threshold = 100
 current_depth = 480
 
@@ -37,14 +40,10 @@ def show_video(image, image_name):
 	
 def find_centroid(imagen):
 	#http://stackoverflow.com/questions/10262600/how-to-detect-region-of-large-of-white-pixels-using-opencv
-	
-	#grises = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
-	
+
 	ret, thres = cv2.threshold(imagen, 127,255,0)
 		
 	contours, hier = cv2.findContours(thres, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)	
-	
-	#print str(contours)+"\n"
 	
 	list_centros = []
 	
@@ -76,6 +75,16 @@ def draw_lines_9(imagen): #draws lines to divide the camara for user
 
 	cv2.line(imagen, (0, 320), (640, 320), (255,250,250),2)
 	
+	return imagen
+
+def draw_lines_4(imagen): #draws lines to divide the camara for user
+	
+	#vetical lines
+	cv2.line(imagen,(320,0),(320,480),(255,250,250),2)
+	
+	#horizontal lines
+	cv2.line(imagen, (0, 240), (640, 240), (255,250,250),2)
+
 	return imagen
 
 def get_cuadrantes_9(centroides):
@@ -115,6 +124,30 @@ def get_cuadrantes_9(centroides):
 	
 	return cuadrantes
 
+def get_cuadrantes_4(centroides):
+	
+	# 1 | 2 |
+	#--------
+	# 3 | 4 |
+	
+	cuadrantes = []
+	for i in range(len(centroides)):
+		x = centroides[i][0]
+		y = centroides[i][1]
+	
+		if (x < 320):
+			if (y < 240):
+				cuadrantes.append(1)
+			else:
+				cuadrantes.append(3)
+		else:
+			if (y < 240):
+				cuadrantes.append(2)
+			else:
+				cuadrantes.append(4)
+	
+	return cuadrantes
+
 def show_image(imagen, mensaje):
 	
 	cv2.imshow(mensaje, imagen)
@@ -127,7 +160,8 @@ def flip_image(imagen):
 	
 	return imagen
 
-def send_midi_message(cuadrantes):
+#t0 = t1 = 0
+def send_midi_message_9(cuadrantes, nota_inicial=60):
 	global t0, t1
 	# 1 | 2 | 3
 	#-----------
@@ -139,32 +173,32 @@ def send_midi_message(cuadrantes):
 	#https://mido.readthedocs.org/en/latest/
 	
 	#definicion de notas
-	c4 = Message("note_on", note=60)
-	c40 = Message("note_off", note=60)
+	c4 = Message("note_on", note=nota_inicial)
+	c40 = Message("note_off", note=nota_inicial)
 	
-	d4 = Message("note_on", note=62)
-	d40 = Message("note_off", note=62)
+	d4 = Message("note_on", note=(nota_inicial+2))
+	d40 = Message("note_off", note=(nota_inicial+2))
 
-	e4 = Message("note_on", note=64)
-	e40 = Message("note_off", note=64)
+	e4 = Message("note_on", note=(nota_inicial+4))
+	e40 = Message("note_off", note=(nota_inicial+4))
 	
-	f4 = Message("note_on", note=65)
-	f40 = Message("note_off", note=65)
+	f4 = Message("note_on", note=(nota_inicial+5))
+	f40 = Message("note_off", note=(nota_inicial+5))
 	
-	g4 = Message("note_on", note=67)
-	g40 = Message("note_off", note=67)
+	g4 = Message("note_on", note=(nota_inicial+7))
+	g40 = Message("note_off", note=(nota_inicial+7))
 	
-	a4 = Message("note_on", note=69)
-	a40 = Message("note_off", note=69)
+	a4 = Message("note_on", note=(nota_inicial+9))
+	a40 = Message("note_off", note=(nota_inicial+9))
 	
-	b4 = Message("note_on", note=71)
-	b40 = Message("note_off", note=71)
+	b4 = Message("note_on", note=(nota_inicial+11))
+	b40 = Message("note_off", note=(nota_inicial+11))
 	
-	c5 = Message("note_on", note=72)
-	c50 = Message("note_off", note=72)
+	c5 = Message("note_on", note=(nota_inicial+12))
+	c50 = Message("note_off", note=(nota_inicial+12))
 	
-	d5 = Message("note_on", note=74)
-	d50 = Message("note_off", note=74)
+	d5 = Message("note_on", note=(nota_inicial+14))
+	d50 = Message("note_off", note=(nota_inicial+14))
 	
 	if (1 in cuadrantes):
 		output.send(c4)
@@ -210,6 +244,83 @@ def send_midi_message(cuadrantes):
 		output.send(d5)
 	else:
 		output.send(d50)
+		
+def send_midi_message_4(cuadrantes, nota_inicial=60):
+	# 1 | 2 |
+	#--------
+	# 3 | 4 |
+	
+	#definicion de notas
+	c4 = Message("note_on", note=nota_inicial)
+	c40 = Message("note_off", note=nota_inicial)
+	
+	d4 = Message("note_on", note=(nota_inicial+4))
+	d40 = Message("note_off", note=(nota_inicial+4))
+
+	e4 = Message("note_on", note=(nota_inicial+7))
+	e40 = Message("note_off", note=(nota_inicial+7))
+	
+	f4 = Message("note_on", note=(nota_inicial+11))
+	f40 = Message("note_off", note=(nota_inicial+11))
+	
+	if (1 in cuadrantes):
+		output.send(c4)
+	else:
+		output.send(c40)	
+	
+	if (2 in cuadrantes):
+		output.send(d4)
+	else:
+		output.send(d40)
+		
+	if (3 in cuadrantes):
+		output.send(e4)
+	else:
+		output.send(e40)
+		
+	if (4 in cuadrantes):
+		output.send(f4)
+	else:
+		output.send(f40)
+
+def define_note (str_nota):
+	if(str_nota == "c"):
+		return 60
+	elif(str_nota == "d"):
+		return 62
+	elif(str_nota == "d#"):
+		return 63
+	elif(str_nota == "e"):
+		return 64
+	elif(str_nota == "f"):
+		return 65
+	elif(str_nota == "f#"):
+		return 66
+	elif(str_nota == "g"):
+		return 67
+	elif(str_nota == "g#"):
+		return 68
+	elif(str_nota == "a"):
+		return 69
+	elif(str_nota == "a#"):
+		return 70
+	elif(str_nota == "b"):
+		return 71
+	else:
+		print "ERROR: La nota no es correcta"
+		return 0
+
+def define_lineas(str_divisiones):
+	if(str_divisiones == "4"):
+		imagen_lineas = draw_lines_4(image)
+		return 1
+	elif(str_divisiones == "9"):
+		imagen_lineas = draw_lines_9(image)
+		return 1
+	else:
+		print "ERROR: Solamente se puede dividir la pantalla en 4 o en 9"
+		return 0
+	
 
 if __name__ == "__main__":
 	print "Presione 'q' para salir"
@@ -226,14 +337,29 @@ if __name__ == "__main__":
 		
 		centroides = rslt_fc['centr']
 		
-		imagen_lineas = draw_lines_9(image)
+		str_nota = sys.argv[1]
+		str_divisiones = sys.argv[2]
+		
+		#### definir divisiones
+		bool_lineas = define_lineas(str_divisiones)
+		
+		### definir notas
+		nota_inicial = define_note(str_nota)
+		
+		if not (nota_inicial and bool_lineas):
+			print "Saliendo"
+			break
 		
 		if (centroides==[]):
-			send_midi_message([])
+			send_midi_message_9([])
 		
 		if centroides:
-			cuadrantes = get_cuadrantes_9(centroides)
-			send_midi_message(cuadrantes)
+			if(str_divisiones == "4"):
+				cuadrantes = get_cuadrantes_4(centroides)
+				send_midi_message_4(cuadrantes, nota_inicial)
+			else:
+				cuadrantes = get_cuadrantes_9(centroides)
+				send_midi_message_9(cuadrantes, nota_inicial)
 				
 		show_image(image, "matching")
 		show_video(image, "matching")
@@ -242,4 +368,4 @@ if __name__ == "__main__":
 		
 		if 'q' == chr(c & 255):
 			break
-	output.close()
+			output.close()
