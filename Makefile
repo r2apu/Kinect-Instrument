@@ -3,4 +3,7 @@ set:
 	amsynth &
 
 play:	
-	python kinect_drumming/kinect_drumming.py
+	python kinect_drumming/kinect_drumming.py c 9
+	
+play2:
+	python kinect_drumming/kinect_drumming.py e 4
