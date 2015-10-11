@@ -53,7 +53,6 @@ def find_centroid(imagen):
 			
 			#centroide	
 			#http://docs.opencv.org/master/dd/d49/tutorial_py_contour_features.html#gsc.tab=0
-			contorno = contours[0]
 			M = cv2.moments(cnt)
 			
 			if (int(M['m00'])!=0):
