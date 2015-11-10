@@ -56,10 +56,10 @@ def main():
 		
 		c = cv2.waitKey(10)
 		
-		if 'q' == chr(c & 255):
-			break
+		if 'q' == chr(c & 255):			
 			output.send(stop)
 			output.close()
+			break
 	
 
 if __name__ == "__main__":

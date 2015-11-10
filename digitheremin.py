@@ -6,7 +6,8 @@ def main():
 	print "Presione 'q' para salir"
 			
 	output = mido.open_output()
-	
+	stop = Message("control_change",control=123)
+			
 	nota_anterior = 69
 	
 	while True:
@@ -46,8 +47,10 @@ def main():
 		c = cv2.waitKey(10)
 		
 		if 'q' == chr(c & 255):
-			break
+			output.send(stop)
 			output.close()
+			break
+			
 	
 if __name__ == "__main__":
 	main()
