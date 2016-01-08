@@ -8,7 +8,7 @@ def main():
 	while True:
 		image = show_depth()
 		
-		image = flip_image(image)
+		#~ image = flip_image(image)
 		
 		rslt_fc = find_centroid_pinta(image)
 		
@@ -20,12 +20,12 @@ def main():
 		
 		image = pinta_circulo(image, lista_centros, 5)
 		
-		lista_centros = limpia_lst_centros(lista_centros)
-		
-		show_image(image, "pintar")
-		show_video(image, "pintar")
-		 
-		c = cv2.waitKey(10)
+		lista_centros = limpia_lst_centros(lista_centros)						
+	
+		show_image(image, "")
+		show_video(image, "control")			
+				
+		c = cv2.waitKey(100)
 		if 'q' == chr(c & 255):
 			break
 

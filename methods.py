@@ -26,6 +26,10 @@ white = (255,255,255)
 black = (0,0,0)
 pink = (255,200,200)
 
+smColor1 = (255, 255, 102)
+smColor2 = (153, 0, 76)
+smColor3 = (25, 51, 0)
+
 # -- matriz de puntos
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
@@ -90,8 +94,8 @@ def def_plane(threshold,current_depth):
 	
 def show_video(image, image_name):	
 	cv2.namedWindow(image_name)
-	cv2.createTrackbar(image_name + ' threshold', image_name, threshold, 1000, change_threshold)
-	cv2.createTrackbar(image_name + ' depth', image_name, current_depth, 1000, change_depth)
+	cv2.createTrackbar(' threshold', image_name, threshold, 1000, change_threshold)
+	cv2.createTrackbar(' depth', image_name, current_depth, 1000, change_depth)
 
 def show_video_colors(image, image_name):
 	global color_R
@@ -104,6 +108,9 @@ def show_video_colors(image, image_name):
 	cv2.createTrackbar(image_name + ' B', image_name, color_B, 255, change_color_B)
 	
 def show_image(imagen, mensaje):
+	#~ cv2.namedWindow(mensaje, cv2.WND_PROP_FULLSCREEN)
+	cv2.namedWindow(mensaje, cv2.WINDOW_NORMAL)
+	#~ cv2.setWindowProperty(mensaje, cv2.WND_PROP_FULLSCREEN, cv2.cv.CV_WINDOW_FULLSCREEN)
 	cv2.imshow(mensaje, imagen)
 
 def flip_image(imagen):
@@ -144,7 +151,7 @@ def convert_BGR(array):
 	
 	return array
 
-def find_centroid_pinta(imagen, max_contours=100000):
+def find_centroid_pinta(imagen, max_contours=10000):
 	global color_R
 	global color_G
 	global color_B
@@ -529,3 +536,7 @@ def gen_image_puntos(centroides):
 						cv2.circle(img_puntos, (circ_x,circ_y), ancho_de_punto, red, -1)
 				
 	return img_puntos
+
+def draw_rect(imagen, color):
+	cv2.rectangle(imagen, (0,0), (640,480),color,-1)
+	return imagen
