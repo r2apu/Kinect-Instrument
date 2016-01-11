@@ -20,5 +20,8 @@ pitar:
 pitar2:
 	python pintar2.py
 
+pintar3:
+	python pintar3.py
+
 efecto:
 	python efecto.py
